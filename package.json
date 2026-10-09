@@ -1,0 +1,143 @@
+{
+  "name": "nestjs-service-manager",
+  "displayName": "NestJS Service Manager",
+  "description": "Discover Nest CLI applications and run, stop, restart and inspect them from Cursor/VS Code.",
+  "version": "0.1.0",
+  "publisher": "local-dev",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:nestjsServices.view",
+    "onView:nestjsServices.explorerView",
+    "onCommand:nestjsServices.open"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "tsc -p . && esbuild media/webview.js --bundle --platform=browser --format=iife --target=es2022 --outfile=media/webview.bundle.js",
+    "watch": "tsc -w -p .",
+    "test": "npm run compile && node --test test/*.test.js",
+    "package:vsix": "npm run compile && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.6.0",
+    "esbuild": "^0.25.12"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Starting a NestJS project executes code from the workspace."
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "nestjsServicesContainer",
+          "title": "NestJS Services",
+          "icon": "resources/nest.svg"
+        }
+      ]
+    },
+    "views": {
+      "nestjsServicesContainer": [
+        {
+          "id": "nestjsServices.view",
+          "name": "Microservices",
+          "type": "webview"
+        }
+      ],
+      "explorer": [
+        {
+          "id": "nestjsServices.explorerView",
+          "name": "NestJS Services",
+          "visibility": "visible",
+          "icon": "resources/nest.svg",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "nestjsServices.refresh",
+        "title": "Refresh NestJS Services",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "nestjsServices.start",
+        "title": "Start Service",
+        "icon": {
+          "light": "resources/run-green.svg",
+          "dark": "resources/run-green.svg"
+        }
+      },
+      {
+        "command": "nestjsServices.stop",
+        "title": "Stop Service",
+        "icon": {
+          "light": "resources/stop-red.svg",
+          "dark": "resources/stop-red.svg"
+        }
+      },
+      {
+        "command": "nestjsServices.restart",
+        "title": "Restart Service",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "nestjsServices.logs",
+        "title": "Show Service Logs",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "nestjsServices.startAll",
+        "title": "Start All Services",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "nestjsServices.stopAll",
+        "title": "Stop All Services",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "nestjsServices.open",
+        "title": "NestJS Services: Open Services",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "nestjsServices.diagnostics",
+        "title": "NestJS Services: Diagnose Detection",
+        "icon": "$(info)"
+      }
+    ],
+    "configuration": {
+      "title": "NestJS Service Manager",
+      "properties": {
+        "nestjsServices.nodePath": {
+          "type": "string",
+          "default": "node",
+          "description": "Node.js executable path used to start the locally installed Nest CLI."
+        },
+        "nestjsServices.watch": {
+          "type": "boolean",
+          "default": true,
+          "description": "Pass --watch to nest start."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "lucide": "^1.52.0",
+    "morphicons": "^1.7.1"
+  }
+}
