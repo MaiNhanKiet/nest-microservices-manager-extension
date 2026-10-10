@@ -2,7 +2,7 @@
   "name": "nestjs-microservices-manager",
   "displayName": "NestJS Microservices Manager",
   "description": "Discover Nest CLI applications and run, stop, restart and inspect them from Cursor/VS Code.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "kietmn",
   "icon": "resources/icon.png",
   "license": "MIT",
