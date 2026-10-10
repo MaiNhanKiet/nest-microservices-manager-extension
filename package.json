@@ -30,7 +30,7 @@
   "scripts": {
     "compile": "tsc -p . && esbuild media/webview.js --bundle --platform=browser --format=iife --target=es2022 --outfile=media/webview.bundle.js",
     "watch": "tsc -w -p .",
-    "test": "npm run compile && node --test test/*.test.js",
+    "test": "npm run compile && node --test test/manifest.test.js test/activation.test.js test/discovery.test.js test/terminal.test.js",
     "package:vsix": "npm run compile && vsce package --no-dependencies"
   },
   "devDependencies": {
