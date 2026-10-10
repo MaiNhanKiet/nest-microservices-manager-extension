@@ -1,66 +1,87 @@
-# NestJS Service Manager — v01
+# NestJS Service Manager
 
-A Cursor / VS Code extension that discovers NestJS applications from `nest-cli.json`, runs them in separate terminals, and displays their process status in a draggable Webview View.
+Discover NestJS applications from `nest-cli.json`, then run, stop, restart, and open their logs from a Cursor / VS Code sidebar.
 
-**Release label:** v01. **Extension version:** `0.1.0` (npm/VS Code require semantic versioning).
+The service list lives in a Webview view. Drag its header next to the Terminal panel if you want the list and logs side by side.
 
-## Display behavior
+Source: [MaiNhanKiet/nest-microservices-manager-extension](https://github.com/MaiNhanKiet/nest-microservices-manager-extension)
 
-- **Active:** each running microservice retains its green left accent and subtle green row background. Two running services show two Active markers.
-- **Selected:** the service currently selected for logs keeps a separate outline.
-- **Hover:** the row under the mouse receives a temporary hover background without clearing Active or Selected on other services.
-- Play/Stop is clickable **only on the left icon**; clicking the service name opens its terminal if it is running.
-- Terminal and Restart remain on the right of running services.
-- White toolbar icons: Refresh, Start All (ListVideo), Stop All (ListX). There is **no Restart All**.
+## What you can do
 
-The interface uses Lucide icons and Morphicons for Run ↔ Stop and scanning animations. Scanning `nest-cli.json` can show a loading animation, and no-result/error states offer guidance to Refresh or Open Folder. Missing or failed browser bundles display an error instead of a silent empty panel.
+- Finds Nest CLI **applications** in the workspace and skips libraries.
+- **Play / Stop** is the icon on the left of a row. Clicking the service name does not start or stop it.
+- Clicking a **running** service name opens that service's terminal.
+- **Logs** and **Restart** appear on the right when you hover a running service.
+- Toolbar actions: **Refresh**, **Start All**, **Stop All**.
+- The row you select gets a light green background. Running and stopped services are told apart by the play and stop icons.
+- If the workspace has no NestJS applications, the panel shows **No NestJS services found**, with **Refresh** and **Open Folder**.
 
-## Setup and run
+The workspace must be trusted. The backend folder needs a locally installed Nest CLI (`nest-cli.json` plus `node_modules`).
 
-1. Extract this ZIP, open the **`nestjs-service-manager-v01`** directory in Cursor.
-2. In the extension project terminal, run:
+### Settings
 
-   ```bash
-   npm install
-   npm run compile
-   npm test
-   ```
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `nestjsServices.nodePath` | `node` | Node.js executable used to start the local Nest CLI |
+| `nestjsServices.watch` | `true` | Pass `--watch` to `nest start` |
 
-   The first install needs npm registry access. Compilation must generate `media/webview.bundle.js`. This generated browser bundle is not included in the source ZIP.
-3. Press **F5**, then open your NestJS backend workspace (e.g. `memora-backend`) inside Extension Development Host.
-4. Open **NestJS Services** in the sidebar (or Explorer), and drag the **view header** to the *side* of the Terminal panel to display logs beside the service list.
+## Build the VSIX
 
-The workspace must be trusted and the backend must have a locally installed Nest CLI. The extension identifies Nest CLI apps through `nest-cli.json` and excludes libraries.
+These commands create the file you upload to the Marketplace. Run them from this extension folder.
 
-## Package as VSIX
+Requirements: Node.js 20 or newer, and npm.
 
 ```bash
+npm install
+npm test
 npm run package:vsix
 ```
 
-Install from Cursor → Extensions → `...` → Install from VSIX. Run `npm install && npm run compile` before packaging.
+`npm test` compiles first. `package:vsix` compiles again, bundles `media/webview.bundle.js`, and writes:
+
+```text
+nestjs-service-manager-0.1.0.vsix
+```
+
+The version in the filename comes from `version` in `package.json`. The VSIX does not include `node_modules`. Lucide and Morphicons are already inside `media/webview.bundle.js`.
+
+Install the same file locally to check it before upload:
+
+1. Cursor or VS Code → Extensions → `...` → **Install from VSIX...**
+2. Choose the `.vsix` file.
+3. Open a trusted NestJS backend folder and confirm the **NestJS Services** view lists the applications.
+
+## Publish to the Marketplace
+
+Do this once, before the first upload.
+
+1. Create a publisher at [Visual Studio Marketplace](https://aka.ms/vscode-create-publisher). The publisher id is the short name, not the display name.
+2. `package.json` already uses publisher id `kietmn`, which matches this Marketplace account.
+3. Bump `"version"` for every later upload. The Marketplace rejects a version that was already published.
+4. Run `npm run package:vsix` again so the VSIX picks up the publisher and version.
+
+`repository` in `package.json` already points at [nest-microservices-manager-extension](https://github.com/MaiNhanKiet/nest-microservices-manager-extension). The Marketplace uses that link for the repository button. The README shown on the Marketplace comes from this VSIX, not from the GitHub page.
+
+Upload the new `.vsix` at [Manage Extensions](https://marketplace.visualstudio.com/manage) → **New extension** → **Visual Studio Code** → upload the file.
+
+To publish from the terminal instead of the website:
+
+```bash
+npx vsce login <publisher-id>
+npx vsce publish
+```
+
+`vsce login` asks for a Personal Access Token from Azure DevOps with the **Marketplace (manage)** scope.
 
 ## Source layout
 
 ```text
 nestjs-service-manager-v01/
-├── .vscode/launch.json
-├── .vscodeignore
-├── LICENSE
 ├── package.json
-├── README.md
-├── tsconfig.json
-├── media/
-│   └── webview.js             # Lucide + Morphicons UI, bundles on compile
+├── src/                 # Extension host (compiled to dist/)
+├── media/webview.js     # Sidebar UI source
+├── media/webview.bundle.js
 ├── resources/
-├── src/
-│   ├── discovery.ts           # Workspace discovery
-│   ├── parser.ts              # Nest CLI config parser
-│   ├── terminal.ts            # Process + terminal management
-│   ├── servicesWebview.ts     # Webview + styles
-│   └── extension.ts           # Activation + commands
-├── dist/                      # Precompiled extension host JS
-└── test/                      # Node.js tests
+├── test/
+└── dist/                # Compiled extension, produced by npm run compile
 ```
-
-The Webview and morph animation should be validated inside Cursor after installation and compilation; the automated tests cover host commands, discovery, UI configuration, and process management, not full graphical interaction.

@@ -1,11 +1,19 @@
 {
-  "name": "nestjs-service-manager",
-  "displayName": "NestJS Service Manager",
+  "name": "nestjs-microservices-manager",
+  "displayName": "NestJS Microservices Manager",
   "description": "Discover Nest CLI applications and run, stop, restart and inspect them from Cursor/VS Code.",
   "version": "0.1.0",
-  "publisher": "local-dev",
-  "private": true,
+  "publisher": "kietmn",
+  "icon": "resources/icon.png",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MaiNhanKiet/nest-microservices-manager-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/MaiNhanKiet/nest-microservices-manager-extension/issues"
+  },
+  "homepage": "https://github.com/MaiNhanKiet/nest-microservices-manager-extension#readme",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -45,7 +53,7 @@
         {
           "id": "nestjsServicesContainer",
           "title": "NestJS Services",
-          "icon": "resources/nest.svg"
+          "icon": "resources/activity-bar.svg"
         }
       ]
     },
@@ -62,7 +70,7 @@
           "id": "nestjsServices.explorerView",
           "name": "NestJS Services",
           "visibility": "visible",
-          "icon": "resources/nest.svg",
+          "icon": "resources/activity-bar.svg",
           "type": "webview"
         }
       ]
